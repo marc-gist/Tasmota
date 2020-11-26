@@ -16,6 +16,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#warning **** USE PWM DIMMER ACTIVATED -------------------------- ****
 
 #ifdef USE_PWM_DIMMER
 
@@ -294,23 +295,23 @@ void PWMDimmerHandleButton(uint32_t button_index, bool pressed)
         // direction for the device and then invert the direction when the power button is released.
         // The new brightness will be calculated below.
         if (power_is_on) {
-#ifdef USE_PWM_DIMMER_REMOTE
-          bri_offset = (active_remote_pwm_dimmer ? (active_remote_pwm_dimmer->power_button_increases_bri ? 1 : -1) : (power_button_increases_bri ? 1 : -1));
-#else // USE_PWM_DIMMER_REMOTE
-          bri_offset = (power_button_increases_bri ? 1 : -1);
-#endif  // USE_PWM_DIMMER_REMOTE
-          invert_power_button_bri_direction = true;
+// #ifdef USE_PWM_DIMMER_REMOTE
+//           bri_offset = (active_remote_pwm_dimmer ? (active_remote_pwm_dimmer->power_button_increases_bri ? 1 : -1) : (power_button_increases_bri ? 1 : -1));
+// #else // USE_PWM_DIMMER_REMOTE
+//           bri_offset = (power_button_increases_bri ? 1 : -1);
+// #endif  // USE_PWM_DIMMER_REMOTE
+//           invert_power_button_bri_direction = true;
         }
 
         // If the power is not on, turn it on using an initial brightness of bri_preset_low and set
         // the power button hold time to delay before we start increasing the brightness.
         else {
-#ifdef USE_PWM_DIMMER_REMOTE
-          if (active_remote_pwm_dimmer)
-            power_on_bri = active_remote_pwm_dimmer->bri = active_remote_pwm_dimmer->bri_preset_low;
-          else
-#endif  // USE_PWM_DIMMER_REMOTE
-            power_on_bri = Settings.bri_preset_low;
+// #ifdef USE_PWM_DIMMER_REMOTE
+//           if (active_remote_pwm_dimmer)
+//             power_on_bri = active_remote_pwm_dimmer->bri = active_remote_pwm_dimmer->bri_preset_low;
+//           else
+// #endif  // USE_PWM_DIMMER_REMOTE
+//             power_on_bri = Settings.bri_preset_low;
           button_hold_time[button_index] = now + 500;
         }
       }
@@ -390,19 +391,7 @@ void PWMDimmerHandleButton(uint32_t button_index, bool pressed)
 
         // If the power button was held with no other buttons pressed, we changed the brightness
         // so invert the bri direction for the next time and send a final update.
-        if (invert_power_button_bri_direction) {
-          invert_power_button_bri_direction = false;
-#ifdef USE_PWM_DIMMER_REMOTE
-          if (active_remote_pwm_dimmer)
-            active_remote_pwm_dimmer->power_button_increases_bri ^= 1;
-          else
-#endif  // USE_PWM_DIMMER_REMOTE
-            power_button_increases_bri ^= 1;
-#ifdef USE_PWM_DIMMER_REMOTE
-          dgr_item = DGR_ITEM_FLAGS;
-          state_updated = true;
-#endif  // USE_PWM_DIMMER_REMOTE
-        }
+        
       }
 
       // If the power button was not held and we're not ignoring the next power button release,
@@ -832,7 +821,7 @@ bool Xdrv35(uint8_t function)
         PWMDimmerSetPower();
 
         // Set the power button hold dimmer direction based on the current brightness.
-        power_button_increases_bri = (light_state.getBri() < 128);
+        //power_button_increases_bri = (light_state.getBri() < 128);
       }
 
       // If we're turning the power off, return true so SetDevicePower doesn't turn the relay off.
