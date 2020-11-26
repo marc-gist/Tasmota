@@ -769,8 +769,17 @@ bool Xdrv35(uint8_t function)
 
           // If hold time has arrived, handle it. if not index 0, which is the power button
           else if (button_index != power_button_index && button_hold_time[button_index] <= now) {
-            PWMDimmerHandleButton(button_index, true);
-            button_held[button_index] = true;
+#ifdef USE_RULES
+            sprintf(TasmotaGlobal.mqtt_data, PSTR("{\"Button%u\":{\"State\":3}}"), button_index + 1);
+            Rules.no_execute = true;
+            if (!XdrvRulesProcess()) {
+#endif  // USE_RULES
+              PWMDimmerHandleButton(button_index, true);
+              button_held[button_index] = true;
+#ifdef USE_RULES
+            }
+            Rules.no_execute = false;
+#endif  // USE_RULES
           }
         }
 
